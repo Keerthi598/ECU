@@ -33,7 +33,7 @@ class ECU:
     # BLE Connection
     #
     
-    async def run_ble_server(self):
+    async def __run_ble_server(self):
         '''
         Sets Up a sever to connect to the ble client on the port 6789 \n
         Runs asynchronously in a perpetual loop \n
@@ -52,9 +52,9 @@ class ECU:
         
         while True:
             client, _ = await loop.sock_accept(ble_server)
-            await self.handle_ble(client)
+            await self.__handle_ble(client)
 
-    async def handle_ble(self, client):
+    async def __handle_ble(self, client):
         '''
         Runs when the BLE client connects to port 6789 to send a request \n
         Receives the request and closes the connection so that the port can wait for the next connection \n
@@ -66,17 +66,17 @@ class ECU:
         '''
         loop = asyncio.get_event_loop()
         data = await loop.sock_recv(client, 33)
-        self.__req =data
+        self.__req = data
         client.close()
 
-        await self.update(request=data)
+        await self.__update(request=data)
         return
         
     #
     # IVI Connection
     # 
 
-    async def run_ivi_(self):
+    async def __run_ivi_server(self):
         '''
         Sets Up a sever to connect to the IVI client on the port 65432 through the network \n
         Runs asynchronously in a perpetual loop \n
@@ -95,9 +95,9 @@ class ECU:
         
         while True:
             client, _ = await loop.sock_accept(ivi_server)
-            await self.handle_ivi(client)
+            await self.__handle_ivi(client)
 
-    async def handle_ivi(self, client):
+    async def __handle_ivi(self, client):
         '''
         Runs when the IVI client connects to port 65432 to send a request \n
         Receives the request and closes the connection so that the port can wait for the next connection \n
@@ -113,17 +113,17 @@ class ECU:
         self.__req =data
         client.close()
 
-        await self.update(request=data)
+        await self.__update(request=data)
         return
 
     #
     # Update Sequence
     #
 
-    async def update(self, request):
+    async def __update(self, request):
         '''
         Update the Ligthing controls according to the given request \n
-        Converts the byte array to be readble and updates according to the  \n
+        Converts the byte array to be readble and updates according to the 
         appropriate status index \n
         Returns update to BLE and then to IVI
 
@@ -202,10 +202,10 @@ class ECU:
             pass
 
         # Send curr State to Both, Brian and BLE
-        await self.update_ble(curr_state)
-        await self.update_ivi(curr_state)
+        await self.__update_ble(curr_state)
+        await self.__update_ivi(curr_state)
     
-    async def update_ble(self, data: bytearray):
+    async def __update_ble(self, data: bytearray):
         '''
         Update the BLE regarding the change  \n
         Connect to Port 9876, send data, then close connection
@@ -223,7 +223,7 @@ class ECU:
         client.close()
         return
 
-    async def update_ivi(self,data:bytearray):
+    async def __update_ivi(self,data:bytearray):
         '''
         Update the IVI regarding the change \n
         Connect to Port 65432, send data, then close connection
@@ -245,7 +245,7 @@ class ECU:
     # Startup and Init Sequence
     #
 
-    async def routine(self):
+    async def __routine(self):
         '''
         Handles the flashing functionality \n
         Do nothing if not flashing
@@ -279,7 +279,7 @@ class ECU:
         @returns: none
         '''
 
-        await asyncio.gather(self.routine(), self.run_ble_server(),self.run_ivi_server())
+        await asyncio.gather(self.__routine(), self.__run_ble_server(),self.__run_ivi_server())
    
 
 def main():

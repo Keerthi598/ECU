@@ -2,10 +2,31 @@ from time import sleep
 from BreadBoard import BreadBoard
 
 class Lightning:
+    '''
+    Control the entire BreadBoard System
+
+    Methods:
+        __init__(self):
+            Initializes the BreadBoards
+        
+        start(self):
+            Main point of entry. Starts the program
+    '''
     def __init__(self):
+        '''
+        Initializes the list for BreadBoards
+
+        @params: self
+        '''
         self.__breadboards = []
         
     def bread_set(self):
+        '''
+        Creates the BreadBoards with their respective GPIO pins
+
+        @params: self
+        @returns: None
+        '''
         #GPIO pins to be checked and verified - most likely to be changed
         
         b1 = BreadBoard(0,26,19,13)
@@ -24,9 +45,15 @@ class Lightning:
         '''
         
     def decode(self, request: bytearray):
-        # Decode the Request String
+        '''
+        Decode and process the request bytearray
+
+        @params: self
+        @params: request: The ByteArray to be processed
+        @return: None
+        '''
+
         converted_list = list(request)
-        
         
         if len(converted_list) != 33:
             return
@@ -41,9 +68,14 @@ class Lightning:
         return
 
     def encode(self):
-        demand = [0 for i in range(33)]
-        i = 1
+        '''
+        Encodes the current state into a byte array and returns it
 
+        @params: self
+        @returns: ByteArray: The encoded ByteArray containing the current state
+        '''
+        demand = [0 for i in range(33)]  # Don't judge the variable name
+        i = 1
 
         for bread_board in self.__breadboards:
             r,g,b,brightness = bread_board.curr_state()

@@ -135,7 +135,7 @@ def main():
     sleep(2)
     test.set_state(0, 0, 0, 0)
     
-    sleep(5)
+    sleep(1)
     print("Test Completed")
 
 if __name__ == "__main__":

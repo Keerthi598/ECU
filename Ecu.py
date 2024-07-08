@@ -202,8 +202,8 @@ class ECU:
             pass
 
         # Send curr State to Both, Brian and BLE
-        await self.__update_ble(curr_state)
-        await self.__update_ivi(curr_state)
+        # await self.__update_ble(curr_state)
+        # await self.__update_ivi(curr_state)
     
     async def __update_ble(self, data: bytearray):
         '''
@@ -226,7 +226,7 @@ class ECU:
     async def __update_ivi(self,data:bytearray):
         '''
         Update the IVI regarding the change \n
-        Connect to Port 65432, send data, then close connection
+        Connect to Port [To Be Decided], send data, then close connection
 
         @params: self
         @params: data: The current state of the lighting
@@ -235,6 +235,9 @@ class ECU:
         loop = asyncio.get_event_loop()
         
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #
+        # Need to change Port Number
+        #
         await loop.sock_connect(client,('', 65432))
         await loop.sock_sendall(client, data)
     
@@ -279,7 +282,8 @@ class ECU:
         @returns: none
         '''
 
-        await asyncio.gather(self.__routine(), self.__run_ble_server(),self.__run_ivi_server())
+        await asyncio.gather(self.__routine(), self.__run_ble_server())
+        # await asyncio.gather(self.__routine(), self.__run_ble_server(),self.__run_ivi_server())
    
 
 def main():

@@ -31,9 +31,10 @@ class Lightning:
         
         b1 = BreadBoard(0,17, 12, 26)
         self.__breadboards.append(b1)
-        '''
-        b2 = BreadBoard(1,24,11,17)
+        
+        b2 = BreadBoard(1,15,23,25)
         self.__breadboards.append(b2)
+        '''
         b3 = BreadBoard(2,2,3,4)
         self.__breadboards.append(b3)
         b4 = BreadBoard(3,27,22,10)
@@ -94,17 +95,24 @@ class Lightning:
 
 '''
 Test Pins
-red_pin = 17
-green_pin = 12
-blue_pin = 26
+red_pin = 17, 15
+green_pin = 12, 23
+blue_pin = 26, 25
+ground_pins = 9, 6
 '''
 
 def main():
     test = Lightning()
     test.bread_set()
     print("Start")
-    test.decode(bytearray([0, 100, 255, 255, 255]))
+    test.decode(bytearray([0, 100, 255, 255, 255, 100, 255, 0, 0]))
     sleep(4)
+
+    test.decode(bytearray([0, 100, 0, 255, 0, 100, 0, 0, 255]))
+    sleep(4)
+
+    test.decode(bytearray(9))
+
     print("Done")
 
 

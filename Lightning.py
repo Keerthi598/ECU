@@ -29,7 +29,7 @@ class Lightning:
         '''
         #GPIO pins to be checked and verified - most likely to be changed
         
-        b1 = BreadBoard(0,26,19,13)
+        b1 = BreadBoard(0,17, 12, 26)
         self.__breadboards.append(b1)
         '''
         b2 = BreadBoard(1,24,11,17)
@@ -55,8 +55,13 @@ class Lightning:
 
         converted_list = list(request)
         
+        # 
+        # Removed For Testing ONLY
+        #
+        '''
         if len(converted_list) != 33:
             return
+        '''
 
         # Index 0 handled by ECU
         index = 1
@@ -89,24 +94,18 @@ class Lightning:
 
 '''
 Test Pins
-red_pin = 26
-green_pin = 13
-blue_pin = 19
+red_pin = 17
+green_pin = 12
+blue_pin = 26
 '''
 
 def main():
-    # test = Lightning()
-    # test.bread_set()
-    # test.decode(bytearray([0, 100, 255, 255, 255]))
-    # sleep(4)
-    # print("")
-    
-    z = bytearray([0,10,20,48,64,80,96])
-    #d = list(z)
-    for i in z:
-        print(i)
-    
-    # print(list(test.encode()))
+    test = Lightning()
+    test.bread_set()
+    print("Start")
+    test.decode(bytearray([0, 100, 255, 255, 255]))
+    sleep(4)
+    print("Done")
 
 
 if __name__ == "__main__":

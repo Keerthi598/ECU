@@ -57,11 +57,12 @@ class Billy:
         await self.__server.start()
         
         # await asyncio.gather(self.check_phone(), self.check_ecu())
-
-        await asyncio.sleep(5)
+        #await asyncio.sleep(5)
         print("Hello")
 
-        await self.__server.stop()
+        while True:
+            await asyncio.sleep(1)
+        #await self.__server.stop()
         
     async def check_phone(self):
         # Check For changes from Phone

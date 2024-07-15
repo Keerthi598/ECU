@@ -27,6 +27,7 @@ class ECU:
         self.__light.bread_set()
         self.__flashing = False
         self.__req = bytearray(33)
+        self.__c_state = bytearray(33)
         return
 
     #
@@ -73,8 +74,7 @@ class ECU:
         return
         
     #
-    # IVI Connection
-    # 
+    # IVI Connectionindex
 
     async def __run_ivi_server(self):
         '''
@@ -120,7 +120,7 @@ class ECU:
     # Update Sequence
     #
 
-    async def __update(self, request):
+    async def __update(self, request: bytearray):
         '''
         Update the Ligthing controls according to the given request \n
         Converts the byte array to be readble and updates according to the 
@@ -134,34 +134,24 @@ class ECU:
 
         converted_data = list(request)
         status_index = converted_data[0]
-        curr_state = bytearray(33)
-        self.__flashing = False
+        self.__c_state = request
 
         if status_index == 0:
             ##
             ## Do Nothing
             ## No request from either IVI or Phone
-            pass
+            return
 
         elif status_index == 16 or status_index == 1 or status_index == 48:
             ##
             ## Continue the request as normal
-            ## Set status index to this status index
-
-            self.__light.decode(request=request)
-            curr_state = self.__light.encode()
-            curr_state[0] = status_index
-
+            ## Nothing additional to be done
             pass
 
         elif status_index == 32:
             ##
             ## Flashing
-            ## To be implemented
-
-
-            self.__flashing = True
-            curr_state = request
+            ## Handled by the other RaspBerry Pi
             pass
 
 
@@ -169,43 +159,29 @@ class ECU:
             ##
             ## Turn everything off
             ## Set status index of the encoding to 0x00
-
-            self.__light.decode(bytearray(33))
-            curr_state = self.__light.encode()
-            
-
-            pass
+            self.__c_state = bytearray(33)
 
         elif status_index == 80:
             ##
             ## Turn everything off
             ## Set status byte to 0x10 
-
-            self.__light.decode(bytearray(33))
-            curr_state = self.__light.encode()
-            curr_state[0] = 16
-
-            pass
+            self.__c_state = bytearray(33)
+            self.__c_state[0] = 16
 
         elif status_index == 96:
             ##
             ## Set all to max brightness and all white
             ## Set status byte to 0x10
-
             zero = bytearray([16])
             pattern = bytearray([100, 255, 255, 255])
             zero.extend(pattern * 8)
-
-            self.__light.decode(zero)
-            curr_state = self.__light.encode()
-       
-            pass
+            self.__c_state = zero
 
         # Send curr State to Both, Brian and BLE
         # await self.__update_ble(curr_state)
         # await self.__update_ivi(curr_state)
     
-    async def __update_ble(self, data: bytearray):
+    async def __update_ble(self):
         '''
         Update the BLE regarding the change  \n
         Connect to Port 9876, send data, then close connection
@@ -218,12 +194,12 @@ class ECU:
         
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         await loop.sock_connect(client,('localhost', 9876))
-        await loop.sock_sendall(client, data)
+        await loop.sock_sendall(client, self.__c_state)
     
         client.close()
         return
 
-    async def __update_ivi(self,data:bytearray):
+    async def __update_ivi(self):
         '''
         Update the IVI regarding the change \n
         Connect to Port [To Be Decided], send data, then close connection
@@ -239,7 +215,7 @@ class ECU:
         # Need to change Port Number
         #
         await loop.sock_connect(client,('', 65432))
-        await loop.sock_sendall(client, data)
+        await loop.sock_sendall(client, self.__c_state)
     
         client.close()
         return
@@ -275,14 +251,14 @@ class ECU:
     async def start(self):
         '''
         Main point of entry for this program \n
-        Adds routine, run_ble_server and run_ivi_server 
+        Adds run_ble_server and run_ivi_server 
         to the list of async tasks
 
         @params: none
         @returns: none
         '''
 
-        await asyncio.gather(self.__routine(), self.__run_ble_server())
+        await asyncio.gather(self.__run_ble_server())
         # await asyncio.gather(self.__routine(), self.__run_ble_server(),self.__run_ivi_server())
    
 

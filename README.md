@@ -7,11 +7,17 @@ Originally built during my internship, this project explores multi-protocol sync
 ### System Overview
 [LED Controller]
 [Raspberry Pi 4+] <--------BLE -------->[Mobile Application]
+
 &nbsp;&nbsp;&nbsp;&nbsp;|
+
 &nbsp;&nbsp;&nbsp;&nbsp;|
+
 &nbsp;&nbsp;&nbsp;&nbsp;|  Ethernet (CAN)
+
 &nbsp;&nbsp;&nbsp;&nbsp;|
+
 &nbsp;&nbsp;&nbsp;&nbsp;|
+
 [ECU Emulator] 
         
 ### :warning: Note
